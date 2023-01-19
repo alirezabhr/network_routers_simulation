@@ -77,3 +77,25 @@ class Network:
             plt.figure()
 
         plt.show()
+
+
+
+def main():
+    # Get the routers data from a json file
+    f = open('routers.json')
+    data = json.load(f)
+
+    initial_routers_graph = data.get('routers')
+    start_node = data.get('start')
+
+
+    network = Network()
+
+    predecessors, distances = network.shortest_path(initial_routers_graph, start_node)
+
+    final_routers_graph = network.create_routers_graph(predecessors, distances)
+
+    network.display_graph([initial_routers_graph, final_routers_graph])
+
+
+main()
