@@ -1,6 +1,10 @@
 import json
 import heapq
 
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
 class Network:
 
     def shortest_path(self, routers_graph, start):
@@ -31,3 +35,45 @@ class Network:
                     heapq.heappush(queue, (distances[neighbor], neighbor))
                     
         return predecessors, distances
+
+    
+    def create_routers_graph(self, predecessors, distances):
+        graph = {}
+
+        # Add graph nodes and costs
+        for node, predecessor in predecessors.items():
+            if node not in graph.keys():
+                graph[node] = {}
+            
+            if predecessor is not None:
+                if predecessor not in graph.keys():
+                    graph[predecessor] = {node: distances[node] - distances[predecessor]}
+                else:
+                    graph[predecessor].update({node: distances[node] - distances[predecessor]})
+                
+        return graph
+                
+
+    def display_graph(self, graphs):
+        for graph in graphs:
+            # Create a new graph
+            G = nx.DiGraph()
+
+            # Add nodes to the graph
+            for node in graph.keys():
+                G.add_node(node)
+
+            # Add edges to the graph along with their costs
+            for node, neighbors in graph.items():
+                for neighbor, cost in neighbors.items():
+                    G.add_edge(node, neighbor, weight=cost)
+
+            # Draw the graph
+            pos = nx.spring_layout(G)
+            nx.draw(G, pos, with_labels=True)
+            labels = nx.get_edge_attributes(G, 'weight')
+            nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+
+            plt.figure()
+
+        plt.show()
